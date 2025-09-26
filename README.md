@@ -1,15 +1,18 @@
 # Projeto: Sistema Distribuído de Troca de Mensagens (BBS/IRC Simplificado)
 
-Este projeto implementa um sistema de troca de mensagens instantâneas simplificado, utilizando ZeroMQ para comunicação assíncrona em uma arquitetura distribuída.
+Este projeto implementa um sistema de troca de mensagens instantâneas simplificado, inspirado nos modelos BBS e IRC, utilizando arquitetura de sistemas distribuídos.
+O desenvolvimento é dividido em partes, com foco inicial nos padrões **Request-Reply (REQ-REP)** e, posteriormente, em **Publisher-Subscriber (PUB-SUB)** do ZeroMQ para comunicação assíncrona.
+
+---
 
 ## ⚙️ Arquitetura e Tecnologia
 
 O projeto segue um padrão de microserviços e utiliza tecnologias padronizadas:
 
-* **Comunicação:** **ZeroMQ** (Padrões REQ-REP e PUB-SUB).
-* **Containerização:** **Docker** para isolamento e testes.
-* **Desenvolvimento:** Mínimo de **3 linguagens de programação** diferentes.
-* **Controle de Versão:** **Git** (Utilização de branches isoladas para cada parte e merge na `main` ao final).
+* **Comunicação:** **ZeroMQ** (Biblioteca de mensagens distribuídas).
+* **Containerização:** **Docker** para isolamento e facilidade de testes.
+* **Linguagens:** O projeto será desenvolvido em, no mínimo, **3 linguagens de programação** diferentes.
+* **Controle de Versão:** **Git** (utilizando branches separadas para cada parte e merge na `main` ao final).
 
 ---
 
