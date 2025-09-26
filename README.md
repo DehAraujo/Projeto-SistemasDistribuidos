@@ -29,25 +29,24 @@ A primeira fase estabelece o fluxo de comunicação e o registro inicial no serv
 ### 2. Formato de Mensagens (JSON)
 
 As trocas de mensagens seguem o padrão REQ-REP e são formatadas em JSON.
+<img width="565" height="347" alt="image" src="https://github.com/user-attachments/assets/96f1ff40-a85c-4e0e-85d2-c07ff191197f" />
+
 
 ➡️ Exemplo de Requisição (Login):
 
-```json
-{
-  "service": "login",
-  "data": {
-    "user": "nome de usuário",
-    "timestamp": "[gerado no envio da mensagem]"
-  }
-}
+#### Exemplo de Comunicação (Login REQ/REP)
 
-➡️ Exemplo de Resposta (Login):
+Este bloco demonstra o formato JSON esperado para a requisição de Login enviada pelo Cliente e a resposta de sucesso ou erro retornada pelo Servidor.
+O fluxo de comunicação utiliza o padrão REQ-REP.
 
-{
-  "service": "login",
-  "data":{
-    "status": "sucesso"/"erro",
-    "timestamp": "[gerado no envio da mensagem]",
-    "description": "[caso a mensagem seja de erro]"
-  }
-}
+---
+
+#### **CLIENTE -> SERVIDOR: REQUISIÇÃO (`REQ: login`)**
+
+<img width="657" height="244" alt="image" src="https://github.com/user-attachments/assets/e3eecea7-6eda-4ea8-8b1a-2c5cbd9a9d2e" />
+<img width="722" height="298" alt="image" src="https://github.com/user-attachments/assets/459db7ca-9ca1-4f7c-9503-eb9103df0912" />
+<img width="735" height="312" alt="image" src="https://github.com/user-attachments/assets/96f996b2-dce9-4b1f-9759-e055f846a3ba" />
+
+
+
+
