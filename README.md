@@ -32,7 +32,7 @@ As trocas de mensagens seguem o padrão REQ-REP e são formatadas em JSON.
 <img width="565" height="347" alt="image" src="https://github.com/user-attachments/assets/96f1ff40-a85c-4e0e-85d2-c07ff191197f" />
 
 
-➡️ Exemplo de Requisição (Login):
+### ➡️ Exemplo de Requisição (Login):
 
 #### Exemplo de Comunicação (Login REQ/REP)
 
