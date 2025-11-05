@@ -1,0 +1,82 @@
+version: '3.8'
+
+# Este arquivo roda e conecta todos os 5 componentes da arquitetura
+
+services:
+  # 1. BROKER (Python) - Padrão ROUTER/DEALER
+  broker:
+    build:
+      context: ./broker  # Ponto de construção da pasta broker
+      dockerfile: Dockerfile
+    image: cc7261/proj-broker:latest
+    container_name: broker
+    volumes:
+      - ./broker:/app  # Monta o código para facilitar o desenvolvimento
+    # Expondo as portas para comunicação interna (Service Discovery) e externa (opcional)
+    ports:
+      - "5555:5555" # Porta FRONTEND (para Cliente)
+      - "5556:5556" # Porta BACKEND (para Servidor)
+  
+  # 2. PROXY DE PUBLICAÇÃO (Python) - Padrão XSUB/XPUB
+  proxy:
+    # Usamos o nome de serviço 'proxy' para facilitar a conexão dos outros componentes
+    build:
+      context: ./proxy-pub # Pasta real onde o Dockerfile e o código estão
+      dockerfile: Dockerfile
+    image: cc7261/proj-proxy:latest
+    container_name: proxy
+    volumes:
+      - ./proxy-pub:/app
+    # Expondo as portas
+    ports:
+      - "5557:5557" # Porta FRONTEND XSUB (para Servidor)
+      - "5558:5558" # Porta BACKEND XPUB (para Clientes/Bots escutarem)
+
+  # 3. SERVER (Python) - Lógica de Negócios
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    image: cc7261/proj-server:latest
+    container_name: server
+    volumes:
+      - ./server:/app
+    # Depende dos brokers para iniciar (garante que os brokers estejam rodando antes)
+    depends_on:
+      - broker
+      - proxy
+    # O Servidor não precisa expor portas, ele SÓ se conecta.
+
+  # 4. CLIENTE (Node.js) - Interface CLI (Interativo)
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    image: cc7261/proj-client:latest
+    container_name: client_cli
+    volumes:
+      - ./client:/app
+    # Configurações essenciais para permitir a interação (prompt) no terminal
+    stdin_open: true 
+    tty: true
+    # Depende do Servidor, que por sua vez depende dos Brokers
+    depends_on:
+      - server
+    deploy:
+      replicas: 1 # Ajustado para 1, já que é uma interface CLI interativa (geralmente não se replica)
+
+  # 5. BOT ATIVO (Go) - Listener e Agente Periódico
+  bot:
+    # Renomeamos de 'listener' para 'bot' (conforme a funcionalidade do código)
+    build:
+      context: ./bot
+      dockerfile: Dockerfile
+    image: cc7261/proj-bot:latest
+    container_name: bot_go
+    volumes:
+      - ./bot:/app
+    depends_on:
+      - proxy # O bot escuta o Proxy e envia comandos para o Broker (via Server)
+      - broker
+    deploy:
+      replicas: 1
