@@ -3,13 +3,13 @@
 # Padrão ZMQ: XSUB/XPUB (com zmq.proxy)
 
 import zmq
-import sys
 
 # --- Configurações de Endereço ---
-# O Proxy de Publicação usa XSUB para receber mensagens do Server
-# e XPUB para publicar (distribuir) para os Listeners/Monitores.
-FRONTEND_PORT = "5557" # Porta para o Server enviar (XSUB)
-BACKEND_PORT = "5558" # Porta para os Listeners receberem (XPUB)
+# O Proxy de Publicação usa XSUB para receber mensagens do servidor
+# e XPUB para redistribuí-las aos listeners/monitores.
+FRONTEND_PORT = "5557"  # Porta para o servidor enviar (XSUB)
+BACKEND_PORT = "5558"   # Porta para os listeners receberem (XPUB)
+
 
 def run_proxy_pub():
     """
@@ -22,54 +22,39 @@ def run_proxy_pub():
     try:
         context = zmq.Context()
 
-        # 1. Configurar o Frontend (XSUB - Entrada de Mensagens):
-        # O Server se conectará aqui para ENVIAR mensagens.
+        # 1. Frontend (XSUB) — recebe mensagens do servidor
         frontend = context.socket(zmq.XSUB)
         frontend.bind(f"tcp://*:{FRONTEND_PORT}")
+        print(f" Proxy-PUB Frontend (XSUB) ligado na porta {FRONTEND_PORT} (entrada do servidor).")
 
-        print(f" Proxy-PUB Frontend (XSUB) ligado na porta {FRONTEND_PORT} (Entrada do Servidor).")
-
-        # 2. Configurar o Backend (XPUB - Saída de Mensagens):
-        # Os Listeners (Monitor) se conectarão aqui para RECEBER mensagens.
+        # 2. Backend (XPUB) — envia mensagens aos listeners
         backend = context.socket(zmq.XPUB)
-        # O XPUB lida automaticamente com o encaminhamento de assinaturas para o XSUB.
         backend.bind(f"tcp://*:{BACKEND_PORT}")
-        
-        print(f" Proxy-PUB Backend (XPUB) ligado na porta {BACKEND_PORT} (Saída para Listeners).")
-        
-        print("---")
-        print("Proxy de Publicação em execução... (CTRL+C para parar)")
-        print("---")
+        print(f" Proxy-PUB Backend (XPUB) ligado na porta {BACKEND_PORT} (saída para listeners).")
 
-        # 3. Executar o Proxy:
-        # O proxy encaminha mensagens do frontend (XSUB) para o backend (XPUB)
-        # e mensagens de assinatura (Subscription) do backend para o frontend.
+        print("\n---")
+        print("Proxy de Publicação em execução... (CTRL+C para encerrar)")
+        print("---\n")
+
+        # 3. Executar o proxy
         zmq.proxy(frontend, backend)
-        
-    # --- Tratamento de Erros ---
+
     except zmq.error.ContextTerminated:
-        print("\n Aviso: Proxy encerrado pelo término do Contexto ZMQ.")
+        print("\nAviso: Proxy encerrado pelo término do contexto ZMQ.")
     except KeyboardInterrupt:
-        # Captura o CTRL+C
-        print("\n Proxy de Publicação encerrado pelo usuário (CTRL+C).")
+        print("\nProxy de Publicação encerrado pelo usuário (CTRL+C).")
     except Exception as e:
-        print(f"\n Erro Grave no Proxy de Publicação: {e}")
-        print("Encerrando o sistema...")
-    
-    # --- Limpeza de Recursos ---
+        print(f"\nErro no Proxy de Publicação: {e}")
     finally:
-        print("\nIniciando limpeza de recursos ZMQ...")
+        print("\nEncerrando e limpando recursos ZMQ...")
         if frontend:
             frontend.close()
         if backend:
             backend.close()
         if context:
             context.term()
-        print("Limpeza concluída. ")
+        print("Limpeza concluída com sucesso.")
 
 
 if __name__ == "__main__":
-    # A chamada principal é encapsulada na função 'run_proxy_pub',
-    # permitindo que o tratamento de exceções (como KeyboardInterrupt)
-    # seja tratado de forma limpa DENTRO da função para garantir o 'finally'.
     run_proxy_pub()

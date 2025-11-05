@@ -10,8 +10,7 @@ WORKDIR /app
 RUN pip install pyzmq
 
 # Copia o arquivo proxy_pub.py para o diretório /app
-COPY proxy_pub.py .
-
+COPY proxy-pub/proxy-pub.py .
 # Comando para executar o Proxy-PUB
 # O nome do arquivo DEVE ser 'proxy_pub.py'
 CMD ["python", "proxy_pub.py"]
