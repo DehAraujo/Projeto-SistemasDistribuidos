@@ -1,5 +1,5 @@
 FROM python:3.11-slim
 WORKDIR /app
-COPY server.py .
+COPY proxy-pub.py .
 RUN pip install pyzmq
-CMD ["python", "server.py"]
+CMD ["python", "proxy-pub.py"]
